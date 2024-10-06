@@ -1,11 +1,10 @@
 #!/bin/bash
 
-sleep_time=60 # интервал мониторинга в секундах
+timestamp=$(date +"%Y%m%d_%H%M%S")
+log_file="monitor_${timestamp}.csv"
 
 function start_monitoring {
-    local timestamp=$(date +"%Y%m%d_%H%M%S")
-    local log_file="monitor_${timestamp}.csv"
-    touch log_file
+    touch ${log_file}
 
     # запуск мониторинга
     (
@@ -13,17 +12,17 @@ function start_monitoring {
             local current_date=$(date +"%Y-%m-%d")
             local disk_usage=$(df / | awk 'NR==2 {print $5}')
             local free_inodes=$(df -i / | awk 'NR==2 {print $4}')
-#            touch log_file
             echo "$(date +"%Y-%m-%d %H:%M:%S"),${disk_usage},${free_inodes}" >> "${log_file}"
 
             # обновление лог-файла при переходе на новый день
             if [[ $(date +"%Y-%m-%d") != "$current_date" ]]; then
                 timestamp=$(date +"%Y%m%d_%H%M%S")
+                rm -f ${log_file}
                 log_file="monitor_${timestamp}.csv"
-                rm -f
+                touch ${log_file}
             fi
 
-            sleep sleep_time
+            sleep 60 # интервал мониторинга в секундах
         done
     ) &
     echo $! > monitor.pid
@@ -35,7 +34,9 @@ function stop_monitoring {
         local pid=$(cat monitor.pid)
         if kill -0 $pid > /dev/null 2>&1; then
             kill $pid
+            # зачищаем созданные файлы
             rm -f monitor.pid
+            rm -f monitor_*
             echo "Monitoring stopped."
         else
             echo "No running process found."
