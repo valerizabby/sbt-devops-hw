@@ -1,6 +1,7 @@
 #!/bin/bash
 
 timestamp=$(date +"%Y%m%d_%H%M%S")
+date=$(date +"%Y-%m-%d")
 log_file="monitor_${timestamp}.csv"
 
 function start_monitoring {
@@ -15,7 +16,7 @@ function start_monitoring {
             echo "$(date +"%Y-%m-%d %H:%M:%S"),${disk_usage},${free_inodes}" >> "${log_file}"
 
             # обновление лог-файла при переходе на новый день
-            if [[ $current_date != $timestamp ]]; then
+            if [[ $current_date != $date ]]; then
                 timestamp=$(date +"%Y%m%d_%H%M%S")
                 rm -f ${log_file}
                 log_file="monitor_${timestamp}.csv"
