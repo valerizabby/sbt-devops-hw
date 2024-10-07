@@ -21,6 +21,7 @@ function start_monitoring {
                 rm -f ${log_file}
                 log_file="monitor_${timestamp}.csv"
                 touch ${log_file}
+                date=$current_date
             fi
 
             sleep 60 # интервал мониторинга в секундах
