@@ -5,7 +5,7 @@ log_file="monitor_${timestamp}.csv"
 
 function start_monitoring {
     touch ${log_file}
-
+    echo "monitor_timestamp,disk_usage,free_inodes" >> "${log_file}"
     # запуск мониторинга
     (
         while true; do
@@ -15,7 +15,7 @@ function start_monitoring {
             echo "$(date +"%Y-%m-%d %H:%M:%S"),${disk_usage},${free_inodes}" >> "${log_file}"
 
             # обновление лог-файла при переходе на новый день
-            if [[ $(date +"%Y-%m-%d") != "$current_date" ]]; then
+            if [[ $current_date != $timestamp ]]; then
                 timestamp=$(date +"%Y%m%d_%H%M%S")
                 rm -f ${log_file}
                 log_file="monitor_${timestamp}.csv"
