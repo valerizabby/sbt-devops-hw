@@ -1,0 +1,7 @@
+# ansible/playbooks/run_container.yml
+- name: Run Container
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Run Container With Ubuntu
+      command: docker-compose -f ../../docker-compose.yml up -d --build

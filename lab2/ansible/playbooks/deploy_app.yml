@@ -1,0 +1,11 @@
+# ansible/playbooks/deploy_app.yml
+- name: Deploy App
+  hosts: localhost
+  connection: local
+  tasks:
+
+    - name: Copy application files to shared volume
+      command: docker cp ../../app/ app_server_1:/shared_volume/app/
+
+    - name: Configure Dependencies Server 1
+      command: docker exec app_server_1 bash /shared_volume/app/configure_dependencies.sh
