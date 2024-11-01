@@ -1,0 +1,20 @@
+# docker-compose.yml
+version: "3.8"
+
+services:
+  app_server_1:
+    image: ubuntu:20.04
+    container_name: app_server_1
+    command: sleep infinity
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "9999:9999"
+    # volume понадобится, чтобы туда скопировать приложение через ansible
+    volumes:
+      - ./shared_volume:/shared_volume
+
+networks:
+  default:
+    driver: bridge
