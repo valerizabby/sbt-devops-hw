@@ -1,0 +1,110 @@
+pipeline {
+    agent any
+    stages {
+
+        stage('Checkout Repository') {
+            steps {
+                // Клонирование репозитория
+                git branch: 'feature/lab4-jenkins', url: 'https://github.com/valerizabby/sbt-devops-hw.git'
+            }
+        }
+
+        stage('Updating system') {
+            steps {
+                sh 'apt-get update'
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                // установка зависимостей для сборки
+                sh 'apt install -y python3 python3-pip'
+                // Установка зависимостей для тестов
+                sh 'apt install -y python3-pytest python3-venv'
+                // Зависимость чтобы работал psycopg2
+                sh 'apt install -y libpq-dev'
+
+            }
+        }
+
+        stage("Build Virtual Environment"){
+            steps {
+                sh '''
+                    python3 -m venv venv
+                    . venv/bin/activate
+                    pip3 install --upgrade pip
+                    pip3 install -r ./lab4/DB/app/requirements.txt
+                '''
+            }
+        }
+
+        stage('Run Unit Tests') {
+            steps {
+                // Запуск тестов и генерация отчёта покрытия
+                sh '''
+                    . venv/bin/activate
+                    pytest lab4/DB/tests/ --cov=lab4/DB/app --cov-report=xml:coverage.xml --junitxml=test-results.xml
+                '''
+            }
+            post {
+                always {
+                    // Публикация JUnit-отчётов тестов
+                    junit 'test-results.xml'
+
+                    // Публикация отчёта покрытия
+                    step([$class: 'CoberturaPublisher', coberturaReportFile: 'coverage.xml'])
+                }
+            }
+        }
+
+        stage('Verify Test Coverage') {
+            steps {
+                script {
+                    def coverage = sh(
+                        script: '''
+                        . venv/bin/activate
+                        coverage report --fail-under=85
+                        ''',
+                        returnStatus: true
+                    )
+
+                    if (coverage != 0) {
+                        error("Test coverage is below 90%")
+                    }
+                }
+            }
+        }
+
+        stage('Code Analysis') {
+            environment {
+                scannerHome = tool 'sonar'
+            }
+            steps {
+                script {
+                    withSonarQubeEnv('sonar') {
+                        sh '''
+                        ${scannerHome}/bin/sonar-scanner \
+                            -Dsonar.projectKey=sbt-devops-hw \
+                            -Dsonar.projectName="SBT DevOps HW" \
+                            -Dsonar.projectVersion=1.0 \
+                            -Dsonar.sources=lab4/DB/app/ \
+                            -Dsonar.language=py \
+                            -Dsonar.host.url=http://sonarqube:9000 \
+                            -Dsonar.python.coverage.reportPaths=coverage.xml \
+                            -Dsonar.login=$SONAR_AUTH_TOKEN
+                        '''
+                    }
+                }
+            }
+        }
+
+    }
+    post {
+        success {
+            echo 'Pipeline completed successfully!'
+        }
+        failure {
+            echo 'Pipeline failed!'
+        }
+    }
+}
