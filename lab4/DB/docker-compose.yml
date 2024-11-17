@@ -1,0 +1,98 @@
+version: '3.9'
+
+services:
+  jenkins:
+#    image: jenkins/jenkins:lts
+    build:
+      context: .
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    container_name: jenkins
+    volumes:
+      - ./volume_storage/jenkins_data:/var/jenkins_home
+
+  sonarqube:
+    image: sonarqube:community
+    depends_on:
+      - db
+    environment:
+      SONAR_JDBC_URL: jdbc:postgresql://db:5432/sonar
+      SONAR_JDBC_USERNAME: sonar
+      SONAR_JDBC_PASSWORD: sonar
+    volumes:
+      - ./volume_storage/sonarqube_data:/opt/sonarqube/data
+      - ./volume_storage/sonarqube_extensions:/opt/sonarqube/extensions
+      - ./volume_storage/sonarqube_logs:/opt/sonarqube/logs
+    ports:
+      - "9000:9000"
+
+  db:
+    image: postgres:12
+    environment:
+      POSTGRES_USER: sonar
+      POSTGRES_PASSWORD: sonar
+    volumes:
+      - ./volume_storage/postgresql:/var/lib/postgresql
+      - ./volume_storage/postgresql_data:/var/lib/postgresql/data
+
+  flask_db:
+    image: postgres:15
+    container_name: postgres_db
+    environment:
+      POSTGRES_USER: flask_user
+      POSTGRES_PASSWORD: flask_password
+      POSTGRES_DB: flask_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgres_data:/var/lib/postgresql/data
+
+  flask_app:
+    container_name: flask_app
+    build:
+      context: ./app
+    command: flask run --host=0.0.0.0 --port=5555
+    environment:
+      FLASK_ENV: development
+      DATABASE_URL: postgresql://flask_user:flask_password@db:5432/flask_db
+    ports:
+      - "5555:5555"
+    depends_on:
+      - flask_db
+    volumes:
+      - ./app:/app
+
+#version: '3.8'
+#
+#services:
+#  db:
+#    image: postgres:15
+#    container_name: postgres_db
+#    environment:
+#      POSTGRES_USER: flask_user
+#      POSTGRES_PASSWORD: flask_password
+#      POSTGRES_DB: flask_db
+#    ports:
+#      - "5432:5432"
+#    volumes:
+#      - postgres_data:/var/lib/postgresql/data
+#
+#  web:
+#    image: valerizab/my_flask_app
+#    container_name: flask_app
+##    build:
+##      context: ./app
+#    command: flask run --host=0.0.0.0 --port=8080
+#    environment:
+#      FLASK_ENV: development
+#      DATABASE_URL: postgresql://flask_user:flask_password@db:5432/flask_db
+#    ports:
+#      - "8080:8080"
+#    depends_on:
+#      - db
+#    volumes:
+#      - ./app:/app
+#
+#volumes:
+#  postgres_data:
