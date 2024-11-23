@@ -55,10 +55,12 @@ pipeline {
             steps {
                 // Запуск тестов и генерация отчёта покрытия
                 sh '''
-                pytest ./lab4/DB/app/tests/ --cov=app --cov-report=xml --cov-report=html --junitxml=test-results.xml
+                pytest ./lab4/DB/app/tests/ --junitxml=test-results.xml
                 '''
             }
         }
+// pytest ./lab4/DB/app/tests/ --cov=app --cov-report=xml --cov-report=html --junitxml=test-results.xml
+
 //             post {
 //                 always {
 //                     // Публикация отчётов тестов
