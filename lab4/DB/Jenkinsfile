@@ -30,15 +30,29 @@ pipeline {
 //                 '''
 //             }
 //         }
+        stage('Updating system') {
+            steps {
+                sh 'apt-get update'
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                // установка зависимостей для сборки
+                sh 'apt install -y python3 python3-pip'
+                // Установка зависимостей для тестов
+                sh 'apt install -y python3-pytest'
+            }
+        }
 
 // TODO починить юниты и придумать как публиковать coverage на питоновском проекте
-//         stage('Run Unit Tests') {
-//             steps {
-//                 // Запуск тестов и генерация отчёта покрытия
-//                 sh '''
-//                 pytest sbt-devops-hw/lab4/DB/tests/ --cov=app --cov-report=xml --cov-report=html --junitxml=test-results.xml
-//                 '''
-//             }
+        stage('Run Unit Tests') {
+            steps {
+                // Запуск тестов и генерация отчёта покрытия
+                sh '''
+                pytest sbt-devops-hw/lab4/DB/tests/ --cov=app --cov-report=xml --cov-report=html --junitxml=test-results.xml
+                '''
+            }
 //             post {
 //                 always {
 //                     // Публикация отчётов тестов
@@ -94,18 +108,18 @@ pipeline {
 //                 }
 //             }
 //         }
-        stage('Build And Deploy Application') {
-            steps {
-                dir("app") {
-                    // Деплой приложения через Ansible или Docker Compose
-                    sh '''
-                    docker-compose down
-                    docker-compose up -d --build
-                    '''
-                }
-            }
-        }
-    }
+//         stage('Build And Deploy Application') {
+//             steps {
+//                 dir("app") {
+//                     // Деплой приложения через Ansible или Docker Compose
+//                     sh '''
+//                     docker-compose down
+//                     docker-compose up -d --build
+//                     '''
+//                 }
+//             }
+//         }
+//     }
     post {
         success {
             echo 'Pipeline completed successfully!'
