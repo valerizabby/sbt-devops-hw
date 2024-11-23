@@ -25,7 +25,17 @@ pipeline {
                 // установка зависимостей для сборки
                 sh 'apt install -y python3 python3-pip'
                 // Установка зависимостей для тестов
-                sh 'apt install -y python3-pytest python3-pytest-cov python3-pytest-html'
+                sh 'apt install -y python3-pytest python3-venv'
+            }
+        }
+        stage("Build Virtual Environment"){
+            steps {
+                sh '''
+                    python3 -m venv venv
+                    source venv/bin/activate
+                    pip3 install --upgrade pip
+                    pip install -r sbt-devops-hw/lab4/DB/app/requirements.txt
+                '''
             }
         }
 
