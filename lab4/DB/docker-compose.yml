@@ -2,7 +2,10 @@ version: '3.9'
 
 services:
   jenkins:
-    image: jenkins/jenkins:lts
+#    image: jenkins/jenkins:lts
+    build:
+      context: .
+    user: root
     ports:
       - "8080:8080"
       - "50000:50000"
