@@ -53,6 +53,7 @@ pipeline {
                 pytest sbt-devops-hw/lab4/DB/tests/ --cov=app --cov-report=xml --cov-report=html --junitxml=test-results.xml
                 '''
             }
+        }
 //             post {
 //                 always {
 //                     // Публикация отчётов тестов
