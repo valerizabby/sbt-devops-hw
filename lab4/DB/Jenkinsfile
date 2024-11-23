@@ -84,23 +84,23 @@ pipeline {
 //                 '''
 //             }
 //         }
-        stage('Build Docker Image') {
-            steps {
-                dir("app") {
-                    // Сборка Docker-образа приложения
-                    sh '''
-                    docker build -t flask-postgres-app:latest .
-                    '''
-                }
-            }
-        }
-        stage('Deploy Application') {
+//         stage('Build Docker Image') {
+//             steps {
+//                 dir("app") {
+//                     // Сборка Docker-образа приложения
+//                     sh '''
+//                     docker build -t flask-postgres-app:latest .
+//                     '''
+//                 }
+//             }
+//         }
+        stage('Build And Deploy Application') {
             steps {
                 dir("app") {
                     // Деплой приложения через Ansible или Docker Compose
                     sh '''
                     docker-compose down
-                    docker-compose up -d
+                    docker-compose up -d --build
                     '''
                 }
             }
