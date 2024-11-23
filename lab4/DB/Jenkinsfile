@@ -6,30 +6,14 @@ pipeline {
         SONARQUBE_ENV = 'SonarQube'       // Имя настроенного SonarQube сервера
     }
     stages {
+
         stage('Checkout Repository') {
             steps {
                 // Клонирование репозитория
                 git branch: 'feature/lab4-jenkins', url: 'https://github.com/valerizabby/sbt-devops-hw.git'
             }
         }
-// TODO убрать попытку в установку зависимостей пусть это будет в докере
-//         stage('Setup Virtual Environment') {
-//             steps {
-//                 sh '''
-//                 # Установка виртуального окружения
-//                 python3 -m venv venv
-//
-//                 # Активируем виртуальное окружение
-//                 source venv/bin/activate
-//
-//                 # Обновляем pip в виртуальной среде
-//                 pip3 install --upgrade pip
-//
-//                 # Устанавливаем зависимости из requirements.txt
-//                 pip3 install -r sbt-devops-hw/lab4/DB/app/requirements.txt
-//                 '''
-//             }
-//         }
+
         stage('Updating system') {
             steps {
                 sh 'apt-get update'
