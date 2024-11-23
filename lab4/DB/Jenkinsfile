@@ -45,7 +45,7 @@ pipeline {
                     python3 -m venv venv
                     . venv/bin/activate
                     pip3 install --upgrade pip
-                    pip3 install -r sbt-devops-hw/lab4/DB/app/requirements.txt
+                    pip3 install -r ./lab4/DB/app/requirements.txt
                 '''
             }
         }
@@ -55,7 +55,7 @@ pipeline {
             steps {
                 // Запуск тестов и генерация отчёта покрытия
                 sh '''
-                pytest sbt-devops-hw/lab4/DB/tests/ --cov=app --cov-report=xml --cov-report=html --junitxml=test-results.xml
+                pytest ./lab4/DB/app/tests/ --cov=app --cov-report=xml --cov-report=html --junitxml=test-results.xml
                 '''
             }
         }
