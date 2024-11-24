@@ -62,7 +62,6 @@ pipeline {
                     pytest lab4/DB/tests/ --junitxml=test-results.xml
                 '''
             }
-        }
 // pytest ./lab4/DB/app/tests/ --cov=app --cov-report=xml --cov-report=html --junitxml=test-results.xml
             post {
                 always {
