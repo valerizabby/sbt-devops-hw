@@ -56,8 +56,9 @@ pipeline {
                 // Запуск тестов и генерация отчёта покрытия
                 //                 pytest workspace/Deploy\ Flask\ App/lab4/DB/tests --junitxml=test-results.xml
                 sh '''
-                    pytest ./lab4/DB/app/tests --junitxml=test-results.xml
+                    pytest lab4/DB/tests/ --junitxml=test-results.xml
                 '''
+                //pytest ./lab4/DB/app/tests --junitxml=test-results.xml
             }
         }
 // pytest ./lab4/DB/app/tests/ --cov=app --cov-report=xml --cov-report=html --junitxml=test-results.xml
