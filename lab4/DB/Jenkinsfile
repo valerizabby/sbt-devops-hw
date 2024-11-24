@@ -59,7 +59,7 @@ pipeline {
                 // Запуск тестов и генерация отчёта покрытия
                 sh '''
                     . venv/bin/activate
-                    pytest lab4/DB/tests/ --cov=app --cov-report=xml:coverage.xml --junitxml=test-results.xml
+                    pytest lab4/DB/tests/ --cov=lab4/DB/app --cov-report=xml:coverage.xml --junitxml=test-results.xml
                 '''
                 //pytest lab4/DB/tests/ --junitxml=test-results.xml
             }
