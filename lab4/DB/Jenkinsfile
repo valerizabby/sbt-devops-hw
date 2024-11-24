@@ -37,6 +37,9 @@ pipeline {
                 sh 'apt install -y python3 python3-pip'
                 // Установка зависимостей для тестов
                 sh 'apt install -y python3-pytest python3-venv'
+                // Зависимость чтобы работал psycopg2
+                sh 'apt install -y libpq-dev'
+
             }
         }
         stage("Build Virtual Environment"){
