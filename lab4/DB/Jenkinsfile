@@ -55,7 +55,8 @@ pipeline {
             steps {
                 // Запуск тестов и генерация отчёта покрытия
                 sh '''
-                pytest ./lab4/DB/app/tests/ --junitxml=test-results.xml
+//                 pytest workspace/Deploy\ Flask\ App/lab4/DB/tests --junitxml=test-results.xml
+                    pytest ./lab4/DB/app/tests --junitxml=test-results.xml
                 '''
             }
         }
