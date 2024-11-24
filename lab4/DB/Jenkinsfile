@@ -59,15 +59,18 @@ pipeline {
                 // Запуск тестов и генерация отчёта покрытия
                 sh '''
                     . venv/bin/activate
-                    pytest lab4/DB/tests/ --junitxml=test-results.xml
+                    pytest lab4/DB/tests/ --cov=app --cov-report=xml:coverage.xml --junitxml=test-results.xml
                 '''
+                //pytest lab4/DB/tests/ --junitxml=test-results.xml
             }
 // pytest ./lab4/DB/app/tests/ --cov=app --cov-report=xml --cov-report=html --junitxml=test-results.xml
             post {
                 always {
-                    // Публикация отчётов тестов
+                    // Публикация JUnit-отчётов тестов
                     junit 'test-results.xml'
-                    publishCoverage adapters: [cobertura('coverage.xml')]
+
+                    // Публикация отчёта покрытия
+                    step([$class: 'CoberturaPublisher', coberturaReportFile: 'coverage.xml'])
                 }
             }
         }

@@ -64,3 +64,5 @@ STOP - останавливает PID
 Теперь при нажатии "Build Now" будет вызываться пайплайн из нашего репо
 
 Где хранится сгенерированный секрет: lab4/DB/volume_storage/jenkins_data/secrets/initialAdminPassword
+
+Дополнительно ставим плагин Cobertura (помимо рекомендованных)
