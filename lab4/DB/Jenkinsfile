@@ -14,16 +14,16 @@ pipeline {
             }
         }
 
-        stage('Debugging') {
-            steps {
-                sh '''
-                    echo "Current working directory:"
-                    pwd
-                    echo "Listing all files:"
-                    ls -R
-                '''
-            }
-        }
+//         stage('Debugging') {
+//             steps {
+//                 sh '''
+//                     echo "Current working directory:"
+//                     pwd
+//                     echo "Listing all files:"
+//                     ls -R
+//                 '''
+//             }
+//         }
 
         stage('Updating system') {
             steps {
@@ -53,28 +53,25 @@ pipeline {
             }
         }
 
-// TODO починить юниты и придумать как публиковать coverage на питоновском проекте
+
         stage('Run Unit Tests') {
             steps {
                 // Запуск тестов и генерация отчёта покрытия
-                //                 pytest workspace/Deploy\ Flask\ App/lab4/DB/tests --junitxml=test-results.xml
                 sh '''
                     . venv/bin/activate
                     pytest lab4/DB/tests/ --junitxml=test-results.xml
                 '''
-                //pytest ./lab4/DB/app/tests --junitxml=test-results.xml
             }
         }
 // pytest ./lab4/DB/app/tests/ --cov=app --cov-report=xml --cov-report=html --junitxml=test-results.xml
-
-//             post {
-//                 always {
-//                     // Публикация отчётов тестов
-//                     junit 'test-results.xml'
-//                     publishCoverage adapters: [cobertura('coverage.xml')]
-//                 }
-//             }
-//         }
+            post {
+                always {
+                    // Публикация отчётов тестов
+                    junit 'test-results.xml'
+                    publishCoverage adapters: [cobertura('coverage.xml')]
+                }
+            }
+        }
 //         stage('Generate Allure Report') {
 //             steps {
 //                 // Генерация Allure-отчёта
