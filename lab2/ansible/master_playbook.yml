@@ -1,0 +1,11 @@
+# ansible/master-playbook.yml
+---
+- name: Run Docker Container
+  import_playbook: playbooks/run_container.yml
+
+- name: Deploying App In Docker
+  import_playbook: playbooks/deploy_app.yml
+
+- name: Run App In Docker Container
+  import_playbook: playbooks/run_app.yml
+

@@ -1,0 +1,7 @@
+# ansible/playbooks/run_app.yml
+- name: Run App
+  hosts: localhost
+  connection: local
+  tasks:
+    - name: Run app server setup in app_server_1
+      command: docker exec app_server_1 bash /shared_volume/app/setup_server.sh
