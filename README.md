@@ -98,6 +98,37 @@ STOP - останавливает PID
 ![pipeline](resources/jenkins_pipeline.png)
 ![success](resources/success.png)
 
+#### Webhook
+Вспользуемся услугами сервиса ngrok для проброса локалхоста во внешний мир.
+
+После регистрации в Getting Started выполняем шаги из setup and installation. Затем пробрасываем порт, на котором живет Jenkins
+```bash
+   ngrok http 8080
+```
+Нам выдается публичная ссылка
+![ngrok](resources/ngrok.png)
+
+Нужно сделать две вещи: настроить ссылку в GitHub и в Jenkins
+1. Jenkins: 
+   - выпускаем токен API: профиль -> security -> выпустить токен (запоминаем название, у меня WebHookToken)
+   - идем в настройки нашей готовой джобы: Build Triggers -> Trigger Build Remotely -> Authentication Token
+   ```bash
+      https://<публичная-ссылка-ngrok>/job/<название-джобы>/build?token=TOKEN_NAME=WebHookToken
+   ```
+2. GitHub:
+   - настройки репозитория -> WebHooks -> add webhook
+      - в payload url указываем
+      ```bash
+         https://<публичная-ссылка-ngrok>/github-webhook/
+      ```
+     - в Content type -> application/json
+
+Если все ок, то гитхаб попробует постучаться на эндпоинт и высветится галочка
+
+![webhook](resources/webhook.png)
+
+Теперь при каждом пуше в пр триггерится сборка
+
 # Что не получилось
 Самой большой болью этой лабы стал деплой. Концептуально все просто: docker-compose для запуска приложения и ее базы отлажены. 
 Фактически тоже все просто. Нужно пробросить сокет, выдать права пользователю jenkins, добавить его в группу docker и все такое.
