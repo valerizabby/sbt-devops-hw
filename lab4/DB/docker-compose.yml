@@ -1,0 +1,50 @@
+version: '3.9'
+
+services:
+  jenkins:
+    image: jenkins/jenkins:lts
+    user: root
+    privileged: true
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+      - "0.0.0.0:5555:5555"
+    container_name: jenkins
+    volumes:
+      - ./volume_storage/jenkins_data:/var/jenkins_home
+      - /var/run/docker.sock:/var/run/docker.sock
+      - /usr/local/bin/docker:/usr/bin/docker
+    networks:
+      - ci_network
+
+  sonarqube:
+    image: sonarqube:community
+    depends_on:
+      - db
+    environment:
+      SONAR_JDBC_URL: jdbc:postgresql://db:5432/sonar
+      SONAR_JDBC_USERNAME: sonar
+      SONAR_JDBC_PASSWORD: sonar
+    volumes:
+      - ./volume_storage/sonarqube_data:/opt/sonarqube/data
+      - ./volume_storage/sonarqube_extensions:/opt/sonarqube/extensions
+      - ./volume_storage/sonarqube_logs:/opt/sonarqube/logs
+    ports:
+      - "9000:9000"
+    networks:
+      - ci_network
+
+  db:
+    image: postgres:12
+    environment:
+      POSTGRES_USER: sonar
+      POSTGRES_PASSWORD: sonar
+    volumes:
+      - ./volume_storage/postgresql:/var/lib/postgresql
+      - ./volume_storage/postgresql_data:/var/lib/postgresql/data
+    networks:
+      - ci_network
+
+networks:
+  ci_network:
+    driver: bridge
